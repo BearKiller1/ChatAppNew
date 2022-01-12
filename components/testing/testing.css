@@ -1,0 +1,17 @@
+.box1, .box2{
+    width: 40%;
+    height: 40vh;
+    background-color: red;
+    margin:10vh 0 0 30%;
+}
+.box2{
+    width: 30%;
+    position: absolute;
+    top:10vh;
+    left:35%;
+    margin:0;
+    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,22 @@
+.generator{
+    width: 20%;
+    height: 60vh;
+    border:1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin:10vh 0 0 40%;
+    float: left;
+}
+
+.todo{
+    display: none;
+    width: 10%;
+    height: 40vh;
+    border:1px solid black;
+    align-items: center;
+    margin:10vh 0 0 10%;
+    float: left;
+    padding: 5%;
+}
