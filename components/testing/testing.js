@@ -1,10 +1,11 @@
-// $(document).on("click","#test",function () {
-//     $.ajax({
-//         url: "components/testing/testing.php",
-//         success: function (response) {
-//             console.log(response);
-//         }
-//     });
-// })
-
-$('.comment').emoticonize();
+$(document).on("click","#test",function () {
+    $.ajax({
+        url: "components/testing/testing.php",
+        data:{
+            act:"get",
+        },
+        success: function (response) {
+            console.log(response);
+        }
+    });
+})
