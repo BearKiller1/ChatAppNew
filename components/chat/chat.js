@@ -134,6 +134,12 @@ $(document).on("click","#start",function () {
     }
 
     SendMessage = (msg) => {
+        var msg_html = '<div class="user_message"><p>' +msg+ '</p></div>';
+        $(".chat_content").append(msg_html);
+
+        $(".chat_content").animate({
+            scrollTop: $(".chat_content").css("height")
+        }, 2000);
 
         $.ajax({
             url: "components/chat/chat.php",
@@ -156,10 +162,11 @@ $(document).on("click","#start",function () {
             },
             success: function (response) {
                 response = JSON.parse(response);
-                for (let i = 0; i < 3; i++) {
-                    console.log(response.result);
-                    
-                }
+                // console.log(response['result']['user_msg']);
+                // var msg_html = '        <div class="user_message"><p>' +response['result']['user_msg'][0]+ '</p></div>';
+                // var partner_html = '        <div class="partner_message"><p>' +response['result']['partner_msg'][1]+ '</p></div>';
+                // $(".chat_content").append(msg_html);
+                // $(".chat_content").append(partner_html);
             }
         });
     }

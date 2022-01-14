@@ -2,12 +2,11 @@
     session_start();
     include "../../includes/mysql.php";
     $db = new Connection();
-    $act = $_REQUEST['act'];
-    if($act == "set"){
+    
+    $data = $conn->query("SELECT * FROM chat_detail")->fetch_assoc();
+    $user_msg = array();
+    foreach ($data as $key => $value) {
+        $user_msg[$key] = $value['user_msg'];
     }
-    else{
-        $data = $_SESSION["user_id"];
-    }
-    //$data = $db->SetQuery("INSERT INTO users(name,gender_id,partner_gender_id) VALUES('satesto kodidan',1,1)");
-    echo $data;
+    var_dump($user_msg);
 ?>

@@ -88,14 +88,20 @@
         public function GetChat(){
             global $data;
             global $db;
-            global $conn;
-            $partner_id = $_REQUEST['partner_id'];
-            $user_id    = $_SESSION['user_id'];
-            $data["result"] = $db->GetData("SELECT chat_detail.*
-                                            FROM chat_detail 
-                                            WHERE chat_detail.user_id = $user_id AND chat_detail.partner_id = $partner_id");
+            $id = 0;
+            $user       = $_SESSION["user_id"];
+            $partner_id = $_REQUEST["partner_id"];
+
+            $id = $db->GetData("SELECT partner_msg, id 
+                                FROM chat_detail 
+                                WHERE partner_id IN($partner_id,$user) AND NOT ISNULL(partner_msg) ORDER BY id DESC LIMIT 1")['id'];
+                                
+            $data["result"]  = $db->GetData("   SELECT partner_msg, id 
+                                                FROM chat_detail 
+                                                WHERE partner_id IN($partner_id,$user) AND NOT ISNULL(partner_msg) ORDER BY id DESC LIMIT 1")['partner_msg'];
+            echo $id;
+            
         }
     }
-
     echo json_encode(["result" => $data["result"], "partner" => $data['partner']]);
 ?>
