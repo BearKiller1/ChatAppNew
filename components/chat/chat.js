@@ -18,7 +18,7 @@ setInterval( () => {
     if(GetChats != false){
         GetChat();
     }
-}, 100);
+}, 1000);
 
 $(document).on("click","#start",function () {
 
@@ -63,6 +63,9 @@ $(document).on("click","#start",function () {
     $(document).on("click","#stop_search, #cancel",function () {
         ChangeStatus(1);
         SetSearch = false;
+        GetChats = false;
+        $("#partner_name").html("");
+        $(".chat_content").html("");
     })
 // // // // // // // // // // 
 
@@ -145,6 +148,19 @@ $(document).on("click","#start",function () {
     }
 
     GetChat = () => {
-        console.log("getting chat");
+        $.ajax({
+            url: "components/chat/chat.php",
+            data: {
+                method:"GetChat",
+                partner_id:partner_id,
+            },
+            success: function (response) {
+                response = JSON.parse(response);
+                for (let i = 0; i < 3; i++) {
+                    console.log(response.result);
+                    
+                }
+            }
+        });
     }
 // // // // // // // // // // 

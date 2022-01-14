@@ -18,7 +18,6 @@
             global $db;
             $my_gender      = $_SESSION["gender_id"];
             $partner_gender = $_SESSION['parnter_gender_id'];
-
             $partner = $db->GetData("   SELECT  * 
                                         FROM    users
                                         WHERE   users.gender_id = $partner_gender 
@@ -84,6 +83,17 @@
                 $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, user_msg)
                 VALUES ($chat_id, $user, $partner_id, '$user_msg')");
             }
+        }
+
+        public function GetChat(){
+            global $data;
+            global $db;
+            global $conn;
+            $partner_id = $_REQUEST['partner_id'];
+            $user_id    = $_SESSION['user_id'];
+            $data["result"] = $db->GetData("SELECT chat_detail.*
+                                            FROM chat_detail 
+                                            WHERE chat_detail.user_id = $user_id AND chat_detail.partner_id = $partner_id");
         }
     }
 
