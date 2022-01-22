@@ -69,39 +69,43 @@
         
         public function SetMessage(){
             global $db;
-            
+
             $user       = $_SESSION["user_id"];
             $partner_id = $_REQUEST["partner"];
             $user_msg   = $_REQUEST["user_msg"];
             $chat_id = $db->GetData("SELECT id FROM chat WHERE user_id = $user")['id'];
 
-            echo $chat_id;
             if($chat_id == null || $chat_id == ""){
                 $data['result'] = "You are not in chat currently";
             }
             else{
                 $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, user_msg)
-                VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+                                VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+                $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
+                $_SESSION['last_msg_id'] = $last_msg_id;
             }
         }
 
         public function GetChat(){
+            $last_msg_id = $_SESSION['last_msg_id'];
             global $data;
             global $db;
             $id = 0;
             $user       = $_SESSION["user_id"];
             $partner_id = $_REQUEST["partner_id"];
 
-            $id = $db->GetData("SELECT partner_msg, id 
-                                FROM chat_detail 
-                                WHERE partner_id IN($partner_id,$user) AND NOT ISNULL(partner_msg) ORDER BY id DESC LIMIT 1")['id'];
-                                
-            $data["result"]  = $db->GetData("   SELECT partner_msg, id 
-                                                FROM chat_detail 
-                                                WHERE partner_id IN($partner_id,$user) AND NOT ISNULL(partner_msg) ORDER BY id DESC LIMIT 1")['partner_msg'];
-            echo $id;
-            
+
+            $id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
+            if($last_msg_id < $id){
+                $data["result"]  = $db->GetData("   SELECT partner_msg, id 
+                                                    FROM chat_detail 
+                                                    WHERE partner_id IN($partner_id,$user) 
+                                                    AND NOT ISNULL(partner_msg) 
+                                                    ORDER BY id DESC 
+                                                    LIMIT 1")['partner_msg'];    
+                $_SESSION['last_msg_id'] = $id;
+            }             
         }
     }
-    echo json_encode(["result" => $data["result"], "partner" => $data['partner']]);
+    echo json_encode([ "result" => $data["result"], "partner" => $data['partner']]);
 ?>

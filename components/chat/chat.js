@@ -71,10 +71,41 @@ $(document).on("click","#start",function () {
 
 // Send Message
     $(document).on("click","#send_message",function() {
-        var msg = $("#main_input").val();
-        SendMessage(msg);
+        if($("#main_input").val() != ""){
+            var msg = $("#main_input").val();
+            SendMessage(msg);
+            $("#main_input").val("");
+        }
     })
 // // // // // // // // // // 
+
+// File Upload
+
+    // $(document).on("change","#file-input", function () {
+    //     var fd = new FormData();
+    //     var files = $('#file-input')[0].files;
+        
+    //     // Check file selected or not
+    //     if(files.length > 0 ){
+    //        fd.append('file',files[0]);
+
+    //        $.ajax({
+    //           url: 'components/upload/upload.php',
+    //           type: 'post',
+    //           data: fd,
+    //           contentType: false,
+    //           processData: false,
+    //           success: function(response){
+    //           },
+    //        });
+    //     }else{
+    //        alert("Please select a file.");
+    //     }
+    // })
+
+
+// // // // // // // // // // 
+
 
 // Global Functions
     SearchPartner = () => {
@@ -162,12 +193,13 @@ $(document).on("click","#start",function () {
             },
             success: function (response) {
                 response = JSON.parse(response);
-                // console.log(response['result']['user_msg']);
-                // var msg_html = '        <div class="user_message"><p>' +response['result']['user_msg'][0]+ '</p></div>';
-                // var partner_html = '        <div class="partner_message"><p>' +response['result']['partner_msg'][1]+ '</p></div>';
-                // $(".chat_content").append(msg_html);
-                // $(".chat_content").append(partner_html);
+                if(response.result != null){
+                    var partner_html = '<div class="partner_message"><p>' +response.result + '</p></div>';
+                    $(".chat_content").append(partner_html);
+                }
             }
         });
     }
 // // // // // // // // // // 
+
+// 
