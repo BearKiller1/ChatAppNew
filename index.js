@@ -1,4 +1,4 @@
-var MainPage = "welcome";
+var MainPage = "testing";
 var RouterURL = "router.php";
 
 window.onload = () => {
