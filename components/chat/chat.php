@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ERROR | E_PARSE);
+
     session_start();
     include "../../includes/mysql.php";
     $db = new Connection();
@@ -75,7 +77,7 @@
             $partner_id = $_REQUEST["partner_id"];
             $chat_checker  = $db->GetData("SELECT user_id FROM chat WHERE user_id = $user");
             $chat_checker1 = $db->GetData("SELECT partner_id FROM chat WHERE partner_id = $user");
-            
+
             if($user != $chat_checker && $chat_checker1 != $user){
                 $db->SetQuery("INSERT INTO chat (user_id, partner_id,date) VALUES ($user,$partner_id,NOW())");
 

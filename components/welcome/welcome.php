@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ERROR | E_PARSE);
+
     session_start();
     include "../../includes/mysql.php";
     $db = new Connection();

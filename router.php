@@ -1,4 +1,6 @@
 <?php
+    error_reporting(E_ERROR | E_PARSE);
+
     include "includes/autoloader.php";
     include "includes/mysql.php";
     $data       = array();             // Array To store data and send it back to Ajax
