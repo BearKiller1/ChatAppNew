@@ -78,7 +78,10 @@ error_reporting(E_ERROR | E_PARSE);
             $chat_checker  = $db->GetData("SELECT user_id FROM chat WHERE user_id = $user");
             $chat_checker1 = $db->GetData("SELECT partner_id FROM chat WHERE partner_id = $user");
 
-            if($user != $chat_checker && $user != $chat_checker1){
+            if($user == $chat_checker || $user == $chat_checker1){
+                
+            }
+            else{
                 $db->SetQuery("INSERT INTO chat (user_id, partner_id,date) VALUES ($user,$partner_id,NOW())");
 
                 $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $user");
