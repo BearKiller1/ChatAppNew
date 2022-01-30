@@ -22,10 +22,23 @@
                                         FROM    users
                                         WHERE   users.gender_id = $partner_gender 
                                         AND partner_gender_id = $my_gender 
-                                        AND status_id = 4 LIMIT 1");
-
+                                        AND status_id = 2 LIMIT 1");
             if($partner == NULL || $partner == ""){
-                $data["result"] = 0;
+                $user = $_SESSION['user_id'];
+                $if_user = $db->GetData("SELECT partner_id FROM chat WHERE user_id = $user")['partner_id'];
+                $if_partner= $db->GetData("SELECT user_id FROM chat WHERE partner_id = $user")['user_id'];
+
+                if($if_user > 0){
+                    $data["result"] = 1;
+                    $data["partner"] = $if_user;
+                }
+                else if($if_partner > 0){
+                        $data["result"] = 1;
+                        $data["partner"] = $if_partner;
+                }
+                else{
+                    $data["result"] = 0;
+                }
             }
             else{
                 $data["result"] = 1;
@@ -36,6 +49,7 @@
                 //  3. Add this Found partner and user both in that chat
                 //  4. update partners and users status to 2 (onchat)
             }
+            
         }
 
         public function ChangeStatus(){
@@ -70,20 +84,61 @@
         public function SetMessage(){
             global $db;
 
-            $user       = $_SESSION["user_id"];
+            $user       = $_SESSION['user_id'];
             $partner_id = $_REQUEST["partner"];
             $user_msg   = $_REQUEST["user_msg"];
-            $chat_id = $db->GetData("SELECT id FROM chat WHERE user_id = $user")['id'];
 
-            if($chat_id == null || $chat_id == ""){
-                $data['result'] = "You are not in chat currently";
-            }
-            else{
+
+            $my_place = $db->GedData("SELECT user_id FROM chat WHERE user_id = $user")['user_id'];
+
+            if($my_place > 0){
+                $chat_id = $db->GetData("SELECT id FROM chat WHERE user_id  = $user")['id'];
                 $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, user_msg)
                                 VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+
                 $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
                 $_SESSION['last_msg_id'] = $last_msg_id;
             }
+            else{
+                $chat_id = $db->GetData("SELECT id FROM chat WHERE partner_id  = $user")['id'];
+                $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, partner_msg)
+                                VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+
+                $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
+                $_SESSION['last_msg_id'] = $last_msg_id;
+            }
+
+
+            // if($user == $partner_id){
+            //     $user_checker = 1;
+            //     $chat_id = $db->GetData("SELECT id FROM chat WHERE partner_id  = $partner_id")['id'];
+            // }
+            // else{
+            //     $chat_id = $db->GetData("SELECT id FROM chat WHERE user_id  = $user")['id'];
+            // }
+            // if($chat_id == null || $chat_id == ""){
+            //     $data['result'] = "You are not in chat currently";
+            // }
+            // else{
+            //     if($user_checker != 1){
+            //         $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, user_msg)
+            //                         VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+
+            //         $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
+            //         $_SESSION['last_msg_id'] = $last_msg_id;
+            //     }
+            //     else{
+            //         $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, partner_msg)
+            //                         VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+
+            //         $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
+            //         $_SESSION['last_msg_id'] = $last_msg_id;
+            //     }
+            // }
+
+
+            // vigeb am useris ids da am chatis id maq tu chemi id emtxveva partneris id-is mashin chemi msg chajdeba partner msgshi
+            // tu arada useris msgshi 
         }
 
         public function GetChat(){

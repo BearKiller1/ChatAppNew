@@ -1,8 +1,6 @@
 <?php
-    include "includes/class/main.class.php";
     include "includes/autoloader.php";
     include "includes/mysql.php";
-
     $data       = array();             // Array To store data and send it back to Ajax
     $method     = $_REQUEST["method"]; // Get The Method Sent From Ajax
     $PageName   = $_REQUEST["page"];   // Get The page Name Send From Ajax

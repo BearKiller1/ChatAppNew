@@ -18,7 +18,7 @@ setInterval( () => {
     if(GetChats != false){
         GetChat();
     }
-}, 1000);
+}, 5000);
 
 $(document).on("click","#start",function () {
 
@@ -196,6 +196,10 @@ $(document).on("click","#start",function () {
                 if(response.result != null){
                     var partner_html = '<div class="partner_message"><p>' +response.result + '</p></div>';
                     $(".chat_content").append(partner_html);
+
+                    $(".chat_content").animate({
+                        scrollTop: $(".chat_content").css("height")
+                    }, 2000);
                 }
             }
         });
