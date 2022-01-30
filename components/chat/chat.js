@@ -18,7 +18,7 @@ setInterval( () => {
     if(GetChats != false){
         GetChat();
     }
-}, 5000);
+}, 1000);
 
 $(document).on("click","#start",function () {
 
@@ -168,9 +168,9 @@ $(document).on("click","#start",function () {
         var msg_html = '<div class="user_message"><p>' +msg+ '</p></div>';
         $(".chat_content").append(msg_html);
 
-        $(".chat_content").animate({
-            scrollTop: $(".chat_content").css("height")
-        }, 2000);
+        // $(".chat_content").animate({
+        //     scrollTop: $(".chat_content").css("height")
+        // }, 2000);
 
         $.ajax({
             url: "components/chat/chat.php",
@@ -197,9 +197,9 @@ $(document).on("click","#start",function () {
                     var partner_html = '<div class="partner_message"><p>' +response.result + '</p></div>';
                     $(".chat_content").append(partner_html);
 
-                    $(".chat_content").animate({
-                        scrollTop: $(".chat_content").css("height")
-                    }, 2000);
+                    // $(".chat_content").animate({
+                    //     scrollTop: $(".chat_content").css("height")
+                    // }, 2000);
                 }
             }
         });

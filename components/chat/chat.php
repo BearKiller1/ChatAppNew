@@ -78,19 +78,14 @@ error_reporting(E_ERROR | E_PARSE);
             $chat_checker  = $db->GetData("SELECT user_id FROM chat WHERE user_id = $user");
             $chat_checker1 = $db->GetData("SELECT partner_id FROM chat WHERE partner_id = $user");
 
-            if($user != $chat_checker && $chat_checker1 != $user){
+            if($user != $chat_checker && $user != $chat_checker1){
                 $db->SetQuery("INSERT INTO chat (user_id, partner_id,date) VALUES ($user,$partner_id,NOW())");
 
                 $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $user");
     
                 $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $partner_id");
             }
-            else{
-    
-                $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $user");
-    
-                $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $partner_id");
-            }
+            $_SESSION['last_msg_id'] = 0;
         }
         
         public function SetMessage(){
@@ -113,6 +108,7 @@ error_reporting(E_ERROR | E_PARSE);
             }
             else{
                 $chat_id = $db->GetData("SELECT id FROM chat WHERE partner_id  = $user")['id'];
+
                 $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, partner_msg)
                                 VALUES ($chat_id, $partner_id, $user, '$user_msg')");
 
@@ -161,17 +157,68 @@ error_reporting(E_ERROR | E_PARSE);
             $user       = $_SESSION["user_id"];
             $partner_id = $_REQUEST["partner_id"];
 
+            // $msg_checker = $db->GetData("SELECT chat_id FROM chat_detail WHERE partner_id = $user")['chat_id'];
+            // $user_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
 
-            $id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
-            if($last_msg_id < $id){
-                $data["result"]  = $db->GetData("   SELECT partner_msg, id 
-                                                    FROM chat_detail 
-                                                    WHERE partner_id IN($partner_id,$user) 
-                                                    AND NOT ISNULL(partner_msg) 
-                                                    ORDER BY id DESC 
-                                                    LIMIT 1")['partner_msg'];    
-                $_SESSION['last_msg_id'] = $id;
-            }             
+
+            $user_checker_msg = $db->GetData("SELECT * FROM chat WHERE user_id = $user");
+
+            $msg_checker = $db->GetData("SELECT id FROM chat_detail ORDER BY id DESC")['id'];
+
+            if($user_checker_msg > 0){
+                if($last_msg_id < $msg_checker){
+                    $data["result"]  = $db->GetData("   SELECT partner_msg, id 
+                                                        FROM chat_detail 
+                                                        WHERE partner_id IN($partner_id,$user) 
+                                                        AND NOT ISNULL(partner_msg) 
+                                                        ORDER BY id DESC 
+                                                        LIMIT 1")['partner_msg'];    
+                    $_SESSION['last_msg_id'] = $id;
+                }
+            }
+            else{
+                if($last_msg_id < $msg_checker){
+                    $id = $db->GetData("    SELECT user_msg, id 
+                                            FROM chat_detail 
+                                            WHERE user_id IN($user,$partner_id) 
+                                            AND NOT ISNULL(user_id) 
+                                            ORDER BY id DESC 
+                                            LIMIT 1")['id'];
+                    $data["result"]  = $db->GetData("   SELECT user_msg, id 
+                                                        FROM chat_detail 
+                                                        WHERE user_id IN($user,$partner_id) 
+                                                        AND NOT ISNULL(user_id) 
+                                                        ORDER BY id DESC 
+                                                        LIMIT 1")['user_msg'];
+                    $_SESSION['last_msg_id'] = $id;
+                }
+            }
+
+
+
+
+
+
+            // echo $last_msg_id . "}}". $id;
+            // if($last_msg_id < $user_msg_id){
+            //     $data["result"]  = $db->GetData("   SELECT partner_msg, id 
+            //                                         FROM chat_detail 
+            //                                         WHERE partner_id IN($partner_id,$user) 
+            //                                         AND NOT ISNULL(partner_msg) 
+            //                                         ORDER BY id DESC 
+            //                                         LIMIT 1")['partner_msg'];    
+            //     $_SESSION['last_msg_id'] = $id;
+            // }     
+            // if($msg_checker > 0){
+            //     echo 12;
+            //     $data["result"]  = $db->GetData("   SELECT user_msg, id 
+            //                                         FROM chat_detail 
+            //                                         WHERE partner_id IN($partner_id,$user) 
+            //                                         AND NOT ISNULL(partner_msg) 
+            //                                         ORDER BY id DESC 
+            //                                         LIMIT 1")['partner_msg'];    
+            //     $_SESSION['last_msg_id'] = $id;
+            // }        
         }
     }
     echo json_encode([ "result" => $data["result"], "partner" => $data['partner']]);
