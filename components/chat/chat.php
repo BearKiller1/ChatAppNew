@@ -101,7 +101,7 @@ error_reporting(E_ERROR | E_PARSE);
             $user_msg   = $_REQUEST["user_msg"];
 
 
-            $my_place = $db->GedData("SELECT user_id FROM chat WHERE user_id = $user")['user_id'];
+            $my_place = $db->GetData("SELECT user_id FROM chat WHERE user_id = $user")['user_id'];
 
             if($my_place > 0){
                 $chat_id = $db->GetData("SELECT id FROM chat WHERE user_id  = $user")['id'];
