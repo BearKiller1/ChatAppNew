@@ -114,7 +114,7 @@ error_reporting(E_ERROR | E_PARSE);
             else{
                 $chat_id = $db->GetData("SELECT id FROM chat WHERE partner_id  = $user")['id'];
                 $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, partner_msg)
-                                VALUES ($chat_id, $user, $partner_id, '$user_msg')");
+                                VALUES ($chat_id, $partner_id, $user, '$user_msg')");
 
                 $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
                 $_SESSION['last_msg_id'] = $last_msg_id;
