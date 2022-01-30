@@ -167,6 +167,12 @@ error_reporting(E_ERROR | E_PARSE);
 
             if($user_checker_msg > 0){
                 if($last_msg_id < $msg_checker){
+                    $id = $db->GetData("    SELECT partner_msg, id 
+                                            FROM chat_detail 
+                                            WHERE partner_id IN($partner_id,$user) 
+                                            AND NOT ISNULL(partner_msg) 
+                                            ORDER BY id DESC 
+                                            LIMIT 1")['id'];  
                     $data["result"]  = $db->GetData("   SELECT partner_msg, id 
                                                         FROM chat_detail 
                                                         WHERE partner_id IN($partner_id,$user) 
