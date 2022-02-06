@@ -54,18 +54,29 @@ $(document).on("click","#start",function () {
 // // // // // // // // // // 
 
 // Start/Stop Search
-    $(document).on("click","#start_search",function () {
+    $("#start_search").click( () => {
         ChangeStatus(4);
         SearchPartner();
         //SetSearch = true;
-    });
+    })
 
     $(document).on("click","#stop_search, #cancel",function () {
         ChangeStatus(1);
         SetSearch = false;
         GetChats = false;
-        $("#partner_name").html("");
-        $(".chat_content").html("");
+        $("#partner_name").html("...");
+        // Insert The div to start again shit
+        $(".chat_content").html('<div class="loader"></div>');
+        DeleteChats();
+    })
+    // Next
+
+    $("#next").click( () => {
+        $("#partner_name").html("Searching");
+        $(".chat_content").html('<div class="loader"></div>');
+        ChangeStatus(4);
+        SetSearch = true;
+        DeleteChats();
     })
 // // // // // // // // // // 
 
@@ -118,10 +129,7 @@ $(document).on("click","#start",function () {
                 response = JSON.parse(response);
                 if(response.result == 1){
                     SetSearch = false;
-                    // 1. Set Partner name  - Done
-                    // 2. Clear Old Chat    - Done
-                    // 3. Start SetInterval To get Chat Details - kinda done
-                    // 4. vso
+                    alert(response.partner['name']);
 
                     $("#partner_name").html(response.partner['name']);
                     $(".chat_content").html("");
@@ -139,11 +147,12 @@ $(document).on("click","#start",function () {
                             partner_id: partner_id
                         },
                         success: function (response) {
-                            alert(response);
+                            alert("partner Found");
                         }
                     })
                 }
                 else if(response.result == 0){
+                    SetSearch = false;
                     SearchPartner();
                     console.log(response.result);
                 }
@@ -157,9 +166,11 @@ $(document).on("click","#start",function () {
             data: {
                 method: "ChangeStatus",
                 status: status_id,
+                partner:partner_id,
             },
             success: function (response) {
-
+                $("#partner_name").html(response.partner['name']);
+                $(".chat_content").html("");
             }
         });
     }
@@ -202,6 +213,17 @@ $(document).on("click","#start",function () {
                     // }, 2000);
                 }
             }
+        });
+    }
+
+    DeleteChats = () => {
+        $.ajax({
+            url: "components/chat/chat.php",
+            data: {
+                method:"DeteleChats",
+            },
+            success: function(response){
+            },
         });
     }
 // // // // // // // // // // 

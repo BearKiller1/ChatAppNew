@@ -20,11 +20,14 @@ error_reporting(E_ERROR | E_PARSE);
             global $db;
             $my_gender      = $_SESSION["gender_id"];
             $partner_gender = $_SESSION['parnter_gender_id'];
+            $user           = $_SESSION['user_id'];
             $partner = $db->GetData("   SELECT  * 
                                         FROM    users
                                         WHERE   users.gender_id = $partner_gender 
                                         AND partner_gender_id = $my_gender 
-                                        AND status_id = 2 LIMIT 1");
+                                        AND status_id = 4 
+                                        AND id != $user
+                                        LIMIT 1");
             if($partner == NULL || $partner == ""){
                 $user = $_SESSION['user_id'];
                 $if_user = $db->GetData("SELECT partner_id FROM chat WHERE user_id = $user")['partner_id'];
@@ -56,11 +59,13 @@ error_reporting(E_ERROR | E_PARSE);
 
         public function ChangeStatus(){
             global $db;
-
-            $status = $_REQUEST["status"];
-            $user   = $_SESSION["user_id"];
-
+            $partner = $_REQUEST['partner'];
+            $status  = $_REQUEST["status"];
+            $user    = $_SESSION["user_id"];
+            
             $db->SetQuery("UPDATE users SET status_id = $status WHERE id = $user");
+
+            //$db->SetQuery("UPDATE users SET status_id = $status WHERE id = $partner");
 
         }
 
@@ -83,11 +88,12 @@ error_reporting(E_ERROR | E_PARSE);
             }
             else{
                 $db->SetQuery("INSERT INTO chat (user_id, partner_id,date) VALUES ($user,$partner_id,NOW())");
-
-                $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $user");
-    
-                $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $partner_id");
             }
+
+            $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $user");
+
+            $db->SetQuery(" UPDATE users SET status_id = 2 WHERE id = $partner_id");
+
             $_SESSION['last_msg_id'] = 0;
         }
         
@@ -116,40 +122,7 @@ error_reporting(E_ERROR | E_PARSE);
                                 VALUES ($chat_id, $partner_id, $user, '$user_msg')");
 
                 $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
-                $_SESSION['last_msg_id'] = $last_msg_id;
             }
-
-
-            // if($user == $partner_id){
-            //     $user_checker = 1;
-            //     $chat_id = $db->GetData("SELECT id FROM chat WHERE partner_id  = $partner_id")['id'];
-            // }
-            // else{
-            //     $chat_id = $db->GetData("SELECT id FROM chat WHERE user_id  = $user")['id'];
-            // }
-            // if($chat_id == null || $chat_id == ""){
-            //     $data['result'] = "You are not in chat currently";
-            // }
-            // else{
-            //     if($user_checker != 1){
-            //         $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, user_msg)
-            //                         VALUES ($chat_id, $user, $partner_id, '$user_msg')");
-
-            //         $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
-            //         $_SESSION['last_msg_id'] = $last_msg_id;
-            //     }
-            //     else{
-            //         $db->SetQuery(" INSERT INTO chat_detail (chat_id, user_id, partner_id, partner_msg)
-            //                         VALUES ($chat_id, $user, $partner_id, '$user_msg')");
-
-            //         $last_msg_id = $db->GetData("SELECT id FROM chat_detail WHERE user_id = $user ORDER BY id DESC")['id'];
-            //         $_SESSION['last_msg_id'] = $last_msg_id;
-            //     }
-            // }
-
-
-            // vigeb am useris ids da am chatis id maq tu chemi id emtxveva partneris id-is mashin chemi msg chajdeba partner msgshi
-            // tu arada useris msgshi 
         }
 
         public function GetChat(){
@@ -198,6 +171,15 @@ error_reporting(E_ERROR | E_PARSE);
                     $_SESSION['last_msg_id'] = $id;
                 }
             }
+        }
+
+        public function DeteleChats(){
+            global $db;
+            $user = $_SESSION['user_id'];
+            $id = $db->GetData("SELECT id FROM chat WHERE user_id = $user OR partner_id = $user")['id'];
+
+            $db->SetQuery("DELETE FROM chat_detail WHERE chat_id = $id");
+            $db->SetQuery("DELETE FROM chat WHERE id = $id");
         }
     }
     echo json_encode([ "result" => $data["result"], "partner" => $data['partner']]);
